@@ -1,0 +1,85 @@
+#
+# QUICKNET ACI CLASS
+# DEMO TENANT NETWORK PROFILE
+# CREA CONF INICIAL
+#
+---
+- name: PLAYBOOK 1 - Configuracion Inicial de Tenant
+  hosts: apic
+  connection: network_cli
+  gather_facts: no
+  vars:
+    aci_host: sandboxapicdc.cisco.com
+    aci_user: admin
+    aci_password: ciscopsdt
+    ansible_connection: local
+    tenant_aci: Telefonica
+    tenant_vrf: vrf_telefonica
+    bd_cliente: bd_telefonica_01
+    bd_subnet_01_gateway: 10.1.1.1
+    bd_subnet_01_mask: 24
+    bd_subnet_02_gateway: 10.2.1.1
+    bd_subnet_02_mask: 24
+
+  tasks:
+    - name: Creando tenant
+      aci_tenant:
+        host: "{{ aci_host }}"
+        username: "{{aci_user}}"
+        password: "{{ aci_password }}"
+        tenant: "{{ tenant_aci }}"
+        description: "{{ tenant_aci }}"
+        validate_certs: no
+        state: present
+
+    - name: Creando VRF
+      aci_vrf:
+        host: "{{ aci_host }}"
+        username: "{{aci_user}}"
+        password: "{{ aci_password }}"
+        vrf: "{{ tenant_vrf }}"
+        tenant: "{{ tenant_aci }}"
+        policy_control_preference: enforced
+        policy_control_direction: ingress
+        validate_certs: no
+        state: present
+      delegate_to: localhost
+
+    - name: Creando Bridge Domain
+      aci_bd:
+        host: "{{ aci_host }}"
+        username: "{{aci_user}}"
+        password: "{{ aci_password }}"
+        validate_certs: no
+        tenant: "{{ tenant_aci }}"
+        bd: "{{ bd_cliente }}"
+        vrf: "{{ tenant_vrf }}"
+        validate_certs: no
+        state: present
+      delegate_to: localhost
+
+    - name: Creando y Asignando Subnet01 a BD
+      aci_bd_subnet:
+        host: "{{ aci_host }}"
+        username: "{{aci_user}}"
+        password: "{{ aci_password }}"
+        tenant: "{{ tenant_aci }}"
+        bd: "{{ bd_cliente }}"
+        gateway: "{{ bd_subnet_01_gateway }}"
+        mask: "{{ bd_subnet_01_mask }}"
+        state: present
+        validate_certs: no
+      delegate_to: localhost
+    
+    - name: Creando y Asignando Subnet02 a BD
+      aci_bd_subnet:
+        host: "{{ aci_host }}"
+        username: "{{aci_user}}"
+        password: "{{ aci_password }}"
+        tenant: "{{ tenant_aci }}"
+        bd: "{{ bd_cliente }}"
+        gateway: "{{ bd_subnet_02_gateway }}"
+        mask: "{{ bd_subnet_02_mask }}"
+        state: present
+        validate_certs: no
+      delegate_to: localhost
