@@ -29,7 +29,7 @@
         password: "{{ aci_password }}"
         tenant: "{{ tenant_aci }}"
         description: "{{ tenant_aci }}"
-        validate_certs: no
+      #  validate_certs: no
         state: present
 
     - name: Creando VRF
