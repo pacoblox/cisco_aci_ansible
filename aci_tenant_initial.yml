@@ -31,6 +31,7 @@
         description: "{{ tenant_aci }}"
         validate_certs: no
         state: present
+        timeout: 90
 
     - name: Creando VRF
       aci_vrf:
