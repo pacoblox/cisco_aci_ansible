@@ -1,0 +1,13 @@
+- name: PLAYBOOK 1 - Configura Smart Call
+  hosts: ptcana,stodomingo
+  connection: network_cli
+  gather_facts: no
+  - name: CONFIGURA SMART CALL HOME
+      ios_config:
+        lines:
+        - snmp-server contact {{ contacto }}
+        - callhome
+        - email-contact {{ contacto }}
+        - phone-contact {{ telefono }}
+        - streetaddress {{ direccion }}
+        - commit
